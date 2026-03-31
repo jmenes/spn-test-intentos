@@ -1,4 +1,4 @@
-jQuery(document).ready(function($) {
+jQuery(document).ready(function ($) {
 
 	// 1. Inicializar Select2 en el buscador de usuarios
 	$('#test-intentos-user-select').select2({
@@ -30,20 +30,20 @@ jQuery(document).ready(function($) {
 	});
 
 	// Botón refrescar
-	$('#test-intentos-refresh').on('click', function(e) {
+	$('#test-intentos-refresh').on('click', function (e) {
 		e.preventDefault();
 		cargarIntentos();
 	});
 
 	function cargarIntentos() {
 		var userId = $('#test-intentos-user-select').val();
-		if ( ! userId ) return;
+		if (!userId) return;
 
 		var $tbody = $('#test-intentos-table-body');
 		var $resultsDiv = $('#test-intentos-results');
-		
+
 		$resultsDiv.show();
-		$tbody.html( $('#tmpl-test-intentos-loading').html() );
+		$tbody.html($('#tmpl-test-intentos-loading').html());
 
 		$.ajax({
 			url: TestIntentosObj.ajax_url,
@@ -54,52 +54,52 @@ jQuery(document).ready(function($) {
 				user_id: userId,
 				nonce: TestIntentosObj.nonce
 			},
-			success: function(response) {
-				if ( response.success ) {
-					renderizarTabla( response.data.attempts );
+			success: function (response) {
+				if (response.success) {
+					renderizarTabla(response.data.attempts);
 				} else {
 					Swal.fire('Error', response.data, 'error');
-					$tbody.html( $('#tmpl-test-intentos-empty').html() );
+					$tbody.html($('#tmpl-test-intentos-empty').html());
 				}
 			},
-			error: function() {
+			error: function () {
 				Swal.fire('Error', TestIntentosObj.error, 'error');
-				$tbody.html( $('#tmpl-test-intentos-empty').html() );
+				$tbody.html($('#tmpl-test-intentos-empty').html());
 			}
 		});
 	}
 
-	function renderizarTabla( attempts ) {
+	function renderizarTabla(attempts) {
 		var $tbody = $('#test-intentos-table-body');
 		$tbody.empty();
 
-		if ( ! attempts || attempts.length === 0 ) {
-			$tbody.html( $('#tmpl-test-intentos-empty').html() );
+		if (!attempts || attempts.length === 0) {
+			$tbody.html($('#tmpl-test-intentos-empty').html());
 			return;
 		}
 
-		attempts.forEach(function(att) {
+		attempts.forEach(function (att) {
 			var tr = $('<tr></tr>');
-			
-			tr.append( $('<td></td>').text( att.test_name ).addClass('column-primary') );
-			tr.append( $('<td></td>').text( att.test_id ) );
-			tr.append( $('<td></td>').text( att.date ) );
-			tr.append( $('<td></td>').text( att.score ) );
-			
+
+			tr.append($('<td></td>').text(att.test_name).addClass('column-primary'));
+			tr.append($('<td></td>').text(att.test_id));
+			tr.append($('<td></td>').text(att.date));
+			tr.append($('<td></td>').text(att.score));
+
 			var btnDelete = $('<button></button>')
 				.addClass('button button-danger delete-attempt-btn')
-				.html('<span class="dashicons dashicons-trash"></span> Borrar')
+				.html('Borrar')
 				.data('testid', att.test_id)
 				.data('index', att.index);
 
-			tr.append( $('<td></td>').append( btnDelete ) );
+			tr.append($('<td></td>').append(btnDelete));
 
 			$tbody.append(tr);
 		});
 	}
 
 	// 3. Borrar Intento con SweetAlert2
-	$(document).on('click', '.delete-attempt-btn', function(e) {
+	$(document).on('click', '.delete-attempt-btn', function (e) {
 		e.preventDefault();
 
 		var btn = $(this);
@@ -132,8 +132,8 @@ jQuery(document).ready(function($) {
 						index: index,
 						nonce: TestIntentosObj.nonce
 					},
-					success: function(response) {
-						if ( response.success ) {
+					success: function (response) {
+						if (response.success) {
 							Swal.fire('Borrado!', 'El intento ha sido borrado exitosamente.', 'success');
 							cargarIntentos(); // Recargar tras borrar
 						} else {
@@ -141,7 +141,7 @@ jQuery(document).ready(function($) {
 							btn.prop('disabled', false).html('<span class="dashicons dashicons-trash"></span> Borrar');
 						}
 					},
-					error: function() {
+					error: function () {
 						Swal.fire('Error', TestIntentosObj.error, 'error');
 						btn.prop('disabled', false).html('<span class="dashicons dashicons-trash"></span> Borrar');
 					}
