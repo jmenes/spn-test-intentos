@@ -17,7 +17,8 @@ class Test_Intentos_Ajax {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Permisos insuficientes.' );
 		}
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'test_intentos_nonce' ) ) {
+		$nonce = isset( $_REQUEST['nonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['nonce'] ) ) : '';
+		if ( ! wp_verify_nonce( $nonce, 'test_intentos_nonce' ) ) {
 			wp_send_json_error( 'Token de seguridad inválido.' );
 		}
 	}
@@ -25,13 +26,13 @@ class Test_Intentos_Ajax {
 	public function search_users() {
 		$this->check_permission();
 
-		$search = isset( $_POST['search'] ) ? sanitize_text_field( wp_unslash( $_POST['search'] ) ) : '';
+		$search = isset( $_REQUEST['search'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['search'] ) ) : '';
 		
 		$args = array(
 			'search'         => '*' . $search . '*',
-			'search_columns' => array( 'user_login', 'user_nicename', 'user_email', 'display_name' ),
+			'search_columns' => array( 'user_login', 'user_nicename', 'user_email' ),
 			'number'         => 20,
-			'fields'         => array( 'ID', 'user_email', 'display_name' )
+			'fields'         => 'all'
 		);
 
 		$users_query = new WP_User_Query( $args );
@@ -53,7 +54,7 @@ class Test_Intentos_Ajax {
 	public function get_attempts() {
 		$this->check_permission();
 
-		$user_id = isset( $_POST['user_id'] ) ? intval( $_POST['user_id'] ) : 0;
+		$user_id = isset( $_REQUEST['user_id'] ) ? intval( $_REQUEST['user_id'] ) : 0;
 		if ( ! $user_id ) {
 			wp_send_json_error( 'ID de usuario inválido.' );
 		}
@@ -107,9 +108,9 @@ class Test_Intentos_Ajax {
 	public function delete_attempt() {
 		$this->check_permission();
 
-		$user_id = isset( $_POST['user_id'] ) ? intval( $_POST['user_id'] ) : 0;
-		$test_id = isset( $_POST['test_id'] ) ? intval( $_POST['test_id'] ) : 0;
-		$index   = isset( $_POST['index'] ) ? intval( $_POST['index'] ) : -1;
+		$user_id = isset( $_REQUEST['user_id'] ) ? intval( $_REQUEST['user_id'] ) : 0;
+		$test_id = isset( $_REQUEST['test_id'] ) ? intval( $_REQUEST['test_id'] ) : 0;
+		$index   = isset( $_REQUEST['index'] ) ? intval( $_REQUEST['index'] ) : -1;
 
 		if ( ! $user_id || ! $test_id || $index < 0 ) {
 			wp_send_json_error( 'Faltan parámetros requeridos.' );
