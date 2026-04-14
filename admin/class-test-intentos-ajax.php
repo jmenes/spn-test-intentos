@@ -152,6 +152,9 @@ class Test_Intentos_Ajax {
 			$this->update_user_progress_score( $user_id, $test_id, $last_attempt );
 		}
 
+		// IMPORTANTE: Borrar la sesión de expiración activa para que el temporizador del campus se resetee.
+		delete_user_meta( $user_id, 'test_expiration_' . $test_id );
+
 		wp_send_json_success( 'Intento borrado con éxito.' );
 	}
 
