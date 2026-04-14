@@ -1,0 +1,17 @@
+{
+	"name": "menes/spn-test-intentos",
+	"description": "Plugin para buscar usuarios y gestionar sus intentos de Tests/Simulacros. Permite borrar intentos para resetear los 10 días.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "menes.studio",
+			"email": "hola@menes.studio"
+		}
+	],
+	"minimum-stability": "dev",
+	"require": {
+		"php": ">=8.0",
+		"composer/installers": "^2.1"
+	}
+}
